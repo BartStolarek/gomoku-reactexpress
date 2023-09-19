@@ -1,0 +1,35 @@
+.cell {
+    height: 2rem;
+    width: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+
+    /* Add these styles to use Flexbox for centering */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.moveId {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 0.8em;
+    pointer-events: none;
+    font-weight: 900;
+}
+
+.grey {
+    background-color: grey;
+}
+
+.black {
+    background-color: black;
+    color: #FFF;
+}
+
+.white {
+    background-color: white;
+    color: #000000;
+}
