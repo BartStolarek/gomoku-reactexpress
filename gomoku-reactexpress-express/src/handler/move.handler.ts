@@ -16,19 +16,23 @@ moveHandler.put(
     '/',
     validateSchema(createMoveSchema),
     async (req: Request, res: Response) => {
+        console.log('moveHandler.put Called (play a move)')
         const move = req.body
         
         const result = await playMove(move)
+
+        console.log('moveHandler.put Played move ' + move.x + ', ' + move.y + ' for game ' + move.gameId)
 
         if (result.error) {
             res.status(422).json({ error: result.error });
         } else {
             res.status(200).json({
-                move: result.move,
                 gameState: result.gameState
             });
         }
     }
 );
+
+
 
 export default moveHandler;

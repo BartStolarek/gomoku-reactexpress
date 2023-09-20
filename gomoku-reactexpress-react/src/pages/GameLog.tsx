@@ -6,6 +6,7 @@ import { useLocalStorage } from '../hooks';
 import { SavedGame, GameState } from '../types';
 import { PLAYER_COLORS } from '../constants';
 import { Cell, Button } from '../components';
+import { get } from "../utils/http"
 
 import style from './GameLog.module.css';
 
@@ -24,13 +25,12 @@ export default function GameLog() {
       const board = Array(foundGame.boardSizeY).fill(0).map(() => Array(foundGame.boardSizeX).fill('grey'));
       // Apply the moves to the board
       foundGame.moves.forEach(move => {
-        board[move.x][move.y] = move.player.name;
+        board[move.x][move.y] = move.player_name;
       });
       // Set the gameState
       setGameState({
         board: board,
         currentPlayer: 'black', // Doesn't matter as it's not interactive
-        moves: foundGame.moves,
         currentMoveNumber: foundGame.moves.length + 1, // Just to be consistent
       });
     }
@@ -49,8 +49,19 @@ export default function GameLog() {
             <div key={i} className={style.gameRow}>
               {row.map((cell, j) => {
                 // Find the moveId for this cell (if any)
-                const move = gameState.moves.find(move => move.x === i && move.y === j);
-                const moveId = move?.id;
+                
+
+                // Need to get the moves from the database
+                // const response = await get<
+                //   { gameId: string },
+                //   { id: string }[]
+                // >(`${API_HOST}/api/game/```, {
+                //   gameId: gameId,
+                //   x: move.x,
+                //   y: move.y,
+                //   player_name: move.player_name
+                // });
+                const moveId = 1; // this is wrong
 
                 return (
                   <Cell

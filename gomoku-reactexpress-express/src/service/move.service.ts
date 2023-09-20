@@ -69,7 +69,7 @@ async function checkMoveValid (move: DocumentDefinition<MoveDocument>): Promise<
     // For simplicity, I'm returning a placeholder boolean.
 
     // Check if the move is within the board's boundaries
-    const game = await GameModel.findOne({ gameId: move.gameId });
+    const game = await GameModel.findOne({ _id: move.gameId });
     if (!game) {
         throw new Error('Game not found');
     }
@@ -95,7 +95,7 @@ async function checkGameState(gameId: string): Promise<string> {
     const moves = await MoveModel.find({ gameId: gameId });
 
     // Step 2: Get the board size
-    const game = await GameModel.findOne({ gameId: gameId });
+    const game = await GameModel.findOne({ _id: gameId });
     if (!game) {
         throw new Error('Game not found');
     }
@@ -111,12 +111,26 @@ async function checkGameState(gameId: string): Promise<string> {
     // Step 4: Check for a winner
     for (const move of moves) {
         if (checkWinner(move.x, move.y, board, boardSizeX, boardSizeY)) {
-        return 'winner';
+            // Update the game in database
+            game.status = 'winner'
+            game.winningPlayer = move.player_name
+
+            // Save the updated game
+            await game.save()
+
+            return 'winner';
         }
     }
 
     // Step 5: Check for a draw
     if (checkDraw(board)) {
+        // Update the game in database
+        game.status = 'draw'
+        game.winningPlayer = 'none'
+
+        // Save the updated game
+        await game.save()
+
         return 'draw';
     }
 

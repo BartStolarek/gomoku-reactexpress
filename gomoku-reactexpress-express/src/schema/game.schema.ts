@@ -38,6 +38,9 @@ export const createGameSchema = object({
 export const getGameSchema = object({
     ...gameParams,
 })
+export const getGameMovesSchema = object({
+    ...gameParams,
+})
 export const updateGameSchema = object({
     ...gameParams,
     ...updateGameStatePayload,
@@ -49,5 +52,6 @@ export const deleteGameSchema = object({
 
 export type CreateGameInput = TypeOf<typeof createGameSchema>
 export type ReadGameInput = TypeOf<typeof getGameSchema>
+export type ReadGameMovesInput = TypeOf<typeof getGameMovesSchema>
 export type UpdateGameInput = TypeOf<typeof updateGameSchema>
 export type DeleteGameInput = TypeOf<typeof deleteGameSchema>
