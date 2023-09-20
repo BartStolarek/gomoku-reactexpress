@@ -12,7 +12,7 @@ import style from "./Game.module.css"
 export default function Game() {
   // Constants needed for the game page
   const { user } = useContext(UserContext) // Used to check if user is logged in
-  const { boardSizeX, boardSizeY } = useContext(GameContext) // Used to get users required board size
+  const { gameId, boardSizeX, boardSizeY } = useContext(GameContext) // Used to get users required board size
   const [savedGames, setSavedGames] = useLocalStorage<SavedGame[]>(
     "savedGamesKey",
     []

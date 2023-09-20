@@ -7,6 +7,8 @@ import movieHandler from './handler/movie.handler'
 import bookingHandler from './handler/booking.handler'
 import sessionHandler from './handler/session.handler'
 import authHandler from './handler/auth.handler'
+import gameHandler from './handler/game.handler'
+import moveHandler from './handler/move.handler'
 
 const app: Express = express()
 
@@ -18,11 +20,9 @@ app.use(
 
 app.use(express.json())
 
-// app.use('/api/theatres', theatreHandler)
-// app.use('/api/movies', movieHandler)
-// app.use('/api/bookings', bookingHandler)
-// app.use('/api/sessions', sessionHandler)
 app.use('/api/auth', authHandler)
+app.use('/api/game', gameHandler)
+app.use('/api/move', moveHandler)
 
 export const server = createServer(app)
 

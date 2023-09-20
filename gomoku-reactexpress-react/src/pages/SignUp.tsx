@@ -13,13 +13,13 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     setErrorMessage('')
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match')
       return
     }
-    const result = register(username, password)
+    const result = await register(username, password)
     if (result === true) {
       navigate('/')
     } else {
