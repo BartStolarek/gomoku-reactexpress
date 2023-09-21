@@ -1,5 +1,5 @@
 import { useContext, useRef } from "react"
-import { GameContext } from "../context"
+import { GameContext, UserContext } from "../context"
 import { useNavigate } from "react-router-dom"
 import { Button } from "../components"
 import { API_HOST } from "../constants"
@@ -13,6 +13,7 @@ const getWebSocketURL = () => {
 }
 
 export default function Home() {
+  const { user } = useContext(UserContext) // Used to check if user is logged in
   const navigate = useNavigate()
   const numberOptions = Array.from({ length: 30 }, (_, i) => i + 1) // Creates an array of numbers from 1 to 30
   const gameContext = useContext(GameContext)
@@ -61,7 +62,9 @@ export default function Home() {
           type="submit"
           onClick={async () => {
             console.log("Attempting to create a game")
-
+            if (!user) {
+              navigate("/login")
+            }
             if (widthRef.current && heightRef.current) {
               const boardSizeX = Number(widthRef.current.value)
               const boardSizeY = Number(heightRef.current.value)
