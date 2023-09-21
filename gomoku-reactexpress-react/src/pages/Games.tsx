@@ -3,21 +3,38 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context';
 import { Button } from '../components';
 import { SavedGame } from '../types';
-import { useLocalStorage } from '../hooks';
+import { get } from '../utils/http';
+import { useState, useEffect } from 'react';
+import { API_HOST } from '../constants';
 
 import style from './Games.module.css';
 
 export default function Games() {
   const { user } = useContext(UserContext);
-  const [savedGames] = useLocalStorage<SavedGame[]>('savedGamesKey', []);
   const navigate = useNavigate();
+  const [games, setGames] = useState<SavedGame[]>([]);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await get<SavedGame[]>(`${API_HOST}/api/game/games`);
+        if (response) setGames(response);
+      } catch (error) {
+        console.error("Failed to fetch games:", error);
+      }
+    };
+    fetchGames();
+  }, []);
 
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
   // Function to obtain the winner string or a draw if the string is null
-  const getWinnerString = (string?: string | null) => {
-    if (string === null){
+  const getWinnerString = (string?: string) => {
+    console.log(`winningPlayer string is: ${string}`)
+    if (string === "unfinished"){
+      return "Unfinished"
+    } else if (string === "draw"){
       return "Draw"
     } else {
       return `Winner: ${capitalizeFirstLetter(string!)}`
@@ -30,13 +47,13 @@ export default function Games() {
     <div className={style.pageContainer}>
       <div className={style.section}>
         <div className={style.gamesList}>
-          {savedGames.map((game, index) => (
+          {games.map((game, index) => (
             <div key={index} className={style.gameBox}>
               <span>
-                Game #{game.gameId}   
+                Game #{index + 1}   
               </span>
               <span>
-                @ {new Date(game.date).toLocaleDateString()} 
+                @ {new Date(game.createdAt).toLocaleDateString()} 
               </span>
               <span>
                 {getWinnerString(game.winningPlayer)}
@@ -44,7 +61,7 @@ export default function Games() {
               <Button
                 type="submit"
                 onClick={() => {
-                  navigate(`/game-log/${game.gameId}`);
+                  navigate(`/game-log/${game._id}`);
                 }}
               >
                 View Game Log
@@ -53,8 +70,6 @@ export default function Games() {
           ))}
         </div>
       </div>
-
-      
 
       <div className={style.section}>
         <Button
@@ -69,4 +84,3 @@ export default function Games() {
     </div>
   );
 }
-

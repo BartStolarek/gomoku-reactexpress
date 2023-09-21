@@ -24,6 +24,7 @@ export default function Game() {
   const gameContext = useContext(GameContext) // Used to get users game context
   const { gameId, boardSizeX, boardSizeY } = gameContext // Used to get users required board size
   const navigate = useNavigate() // Used to navigate to other pages
+  const [loading, setLoading] = useState(false);  
 
   const [gameState, setGameState] = useState<GameState>({
     board: Array(boardSizeY)
@@ -50,7 +51,7 @@ export default function Game() {
   // Handle clicking a cell
   const handleCellClick = async (x: number, y: number) => {
     // If the game has ended do nothing
-    if (gameEnded) {
+    if (loading || gameEnded) {
       return
     }
     // If the cell is already occupied do nothing
@@ -67,53 +68,61 @@ export default function Game() {
 
     console.log("Sending move to server")
 
-    const response = await put<
-      { gameId: string; x: number; y: number; player_name: string },
-      { gameState: string }
-    >(`${API_HOST}/api/move/`, {
-      gameId: gameId,
-      x: move.x,
-      y: move.y,
-      player_name: move.player_name
-    })
+    setLoading(true);
 
-    console.log(`Received from server response gameState: ${response.gameState}`)
+    try {
+      const response = await put<
+        { gameId: string; x: number; y: number; player_name: string },
+        { gameState: string }
+      >(`${API_HOST}/api/move/`, {
+        gameId: gameId,
+        x: move.x,
+        y: move.y,
+        player_name: move.player_name
+      })
 
-    // Otherwise create a new board 
-    const newBoard = [...gameState.board]
-    newBoard[x][y] = gameState.currentPlayer
+      console.log(`Received from server response gameState: ${response.gameState}`)
 
-    // Update the current player to next player
-    const nextPlayer = gameState.currentPlayer === "black" ? "white" : "black"
-    
-    // If response string is 'winner', else if response string is 'draw', else if response string is 'continue'
-    if (response.gameState === 'winner') {
-      setGameState({
-        board: newBoard,
-        currentPlayer: nextPlayer,
-        currentMoveNumber: gameState.currentMoveNumber + 1,
-      })
-      setGameEnded(true)
-      setIsWinner(true)
-      setWinningPlayer(gameState.currentPlayer)
-    }
-    else if (response.gameState === 'draw') {
-      setGameState({
-        board: newBoard,
-        currentPlayer: nextPlayer,
-        currentMoveNumber: gameState.currentMoveNumber + 1,
-      })
-      setGameEnded(true)
-    }
-    else if (response.gameState === 'continue') {
-      setGameState({
-        board: newBoard,
-        currentPlayer: nextPlayer,
-        currentMoveNumber: gameState.currentMoveNumber + 1,
-      })
-    }
-    else {
-      console.log("Error: " + response)
+      // Otherwise create a new board 
+      const newBoard = [...gameState.board]
+      newBoard[x][y] = gameState.currentPlayer
+
+      // Update the current player to next player
+      const nextPlayer = gameState.currentPlayer === "black" ? "white" : "black"
+      
+      // If response string is 'winner', else if response string is 'draw', else if response string is 'continue'
+      if (response.gameState === 'winner') {
+        setGameState({
+          board: newBoard,
+          currentPlayer: nextPlayer,
+          currentMoveNumber: gameState.currentMoveNumber + 1,
+        })
+        setGameEnded(true)
+        setIsWinner(true)
+        setWinningPlayer(gameState.currentPlayer)
+      }
+      else if (response.gameState === 'draw') {
+        setGameState({
+          board: newBoard,
+          currentPlayer: nextPlayer,
+          currentMoveNumber: gameState.currentMoveNumber + 1,
+        })
+        setGameEnded(true)
+      }
+      else if (response.gameState === 'continue') {
+        setGameState({
+          board: newBoard,
+          currentPlayer: nextPlayer,
+          currentMoveNumber: gameState.currentMoveNumber + 1,
+        })
+      }
+      else {
+        console.log("Error: " + response)
+      }
+    } catch (error) {
+      console.error("Error sending move to server:", error)
+    } finally {
+      setLoading(false);
     }
   }
 
