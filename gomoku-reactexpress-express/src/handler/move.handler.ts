@@ -4,8 +4,8 @@ import { intersection } from 'lodash'
 
 import validateSchema from '../middleware/validateSchema'
 import { wss } from '../websocket'
-import { createMoveSchema } from '../schema/move.schema'
-import { playMove } from '../service/move.service'
+import { createMoveSchema, getGameMovesSchema } from '../schema/move.schema'
+import { playMove, getMovesByGameId } from '../service/move.service'
 import { deserializeUser } from '../middleware/deserializeUser'
 
 const moveHandler = express.Router()
@@ -33,6 +33,22 @@ moveHandler.put(
     }
 );
 
+// Get moves for a game
+moveHandler.get(
+    '/:gameId',
+    validateSchema(getGameMovesSchema),
+    async (req: Request, res: Response) => {
+        console.log('moveHandler.get Called get moves for a game')
+        const gameId = req.params.gameId
+
+        // Get a list of moves matching gameId
+        const moves = await getMovesByGameId(gameId)
+
+        console.log('gameHandler.get Found ' + moves.length + ' moves for game ' + gameId)
+
+        res.status(200).json(moves);
+    }
+)
 
 
 export default moveHandler;

@@ -25,12 +25,22 @@ const moveParams = {
     }),
 }
 
+const gameParams = {
+    params: object({
+        gameId: string({
+            required_error: 'Game id is required',
+        }),
+    }),
+}
 
 export const createMoveSchema = object({
     ...payload,
 })
 export const getMoveSchema = object({
     ...moveParams,
+})
+export const getGameMovesSchema = object({
+    ...gameParams,
 })
 export const updateMoveSchema = object({
     ...moveParams,
@@ -42,5 +52,6 @@ export const deleteMoveSchema = object({
 
 export type CreateGameInput = TypeOf<typeof createMoveSchema>
 export type ReadGameInput = TypeOf<typeof getMoveSchema>
+export type ReadGameMovesInput = TypeOf<typeof getGameMovesSchema>
 export type UpdateGameInput = TypeOf<typeof updateMoveSchema>
 export type DeleteGameInput = TypeOf<typeof deleteMoveSchema>

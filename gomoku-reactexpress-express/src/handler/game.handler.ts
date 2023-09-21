@@ -1,11 +1,9 @@
 import express, { Request, Response } from 'express'
-import mongoose from 'mongoose'
-import { intersection } from 'lodash'
 
 import validateSchema from '../middleware/validateSchema'
 import { wss } from '../websocket'
-import { createGameSchema, getGameMovesSchema } from '../schema/game.schema'
-import { createGame, getGameMoves } from '../service/game.service'
+import { createGameSchema, getGameSchema } from '../schema/game.schema'
+import { createGame, getAllGames, getGameById } from '../service/game.service'
 import { deserializeUser } from '../middleware/deserializeUser'
 
 const gameHandler = express.Router()
@@ -32,21 +30,39 @@ gameHandler.post(
     }
 );
 
-// Get moves for a game
+// Get all games
+gameHandler.get(
+    '/games',
+    async (req: Request, res: Response) => {
+        console.log(`gameHandler.get Called get all games`)
+
+        // Get all games
+        const games = await getAllGames()
+
+        console.log(`gameHandler.get Found ${games.length} games`)
+
+        res.status(200).json(games);
+    }
+)
+
+
+// Get a game
 gameHandler.get(
     '/:gameId',
-    validateSchema(getGameMovesSchema),
+    validateSchema(getGameSchema),
     async (req: Request, res: Response) => {
-        console.log('gameHandler.get Called (get moves for a game)')
+        console.log('gameHandler.get Called get game with id: ' + req.params.gameId)
         const gameId = req.params.gameId
 
         // Get a list of moves matching gameId
-        const moves = await getGameMoves(gameId)
+        const moves = await getGameById(gameId)
 
-        console.log('gameHandler.get Found ' + moves.length + ' moves for game ' + gameId)
+        console.log('gameHandler.get Found game with id: ' + gameId)
 
         res.status(200).json(moves);
     }
 )
+
+
 
 export default gameHandler;

@@ -9,7 +9,7 @@ export async function createGame(gameInput: Partial<GameDocument>): Promise<Game
         boardSizeX: gameInput.boardSizeX,
         boardSizeY: gameInput.boardSizeY,
         status: "continue",
-        winningPlayer: "none"
+        winningPlayer: "unfinished"
     };
 
     // Create the game in the database using the GameModel
@@ -25,11 +25,6 @@ export async function getGameById(id: string) {
 
 export async function getAllGames() {
     return GameModel.find().lean()
-}
-
-export async function getGameMoves(id: string) {
-    // Look through MoveModel and find all moves with the gameId of id
-    return MoveModel.find({ gameId: new mongoose.Types.ObjectId(id) }).lean()
 }
 
 // Update

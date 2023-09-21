@@ -1,6 +1,6 @@
 import mongoose, { DocumentDefinition } from 'mongoose'
 import MoveModel, { MoveDocument } from '../model/move.model'
-import GameModel, { GameDocument } from '../model/game.model'
+import GameModel from '../model/game.model'
 
 // Create
 export async function createMove(move: DocumentDefinition<MoveDocument>) {
@@ -63,10 +63,6 @@ export async function playMove(move: DocumentDefinition<MoveDocument>) {
 
 
 async function checkMoveValid (move: DocumentDefinition<MoveDocument>): Promise<boolean> {
-    // Logic to check if the move is valid
-    // This could be a series of checks on the board's current state
-    // to determine if the move is valid.
-    // For simplicity, I'm returning a placeholder boolean.
 
     // Check if the move is within the board's boundaries
     const game = await GameModel.findOne({ _id: move.gameId });
@@ -126,7 +122,7 @@ async function checkGameState(gameId: string): Promise<string> {
     if (checkDraw(board)) {
         // Update the game in database
         game.status = 'draw'
-        game.winningPlayer = 'none'
+        game.winningPlayer = 'draw'
 
         // Save the updated game
         await game.save()
