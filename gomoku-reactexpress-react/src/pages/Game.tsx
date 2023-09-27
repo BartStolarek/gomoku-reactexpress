@@ -3,19 +3,12 @@ import { Navigate, useNavigate } from "react-router-dom"
 import { UserContext, GameContext } from "../context"
 import { Button, Cell, Message } from "../components"
 import { PLAYER_COLORS } from "../constants"
-import { GameState, Move, SavedGame } from "../types"
-import { useLocalStorage } from "../hooks"
+import { GameState, Move } from "../types"
 import { API_HOST } from "../constants"
 import { put, post } from "../utils/http"
 
 import style from "./Game.module.css"
-import { moveMessagePortToContext } from "worker_threads"
 
-const getWebSocketURL = () => {
-  if (!API_HOST) return "ws://localhost:8080"
-  const hostURL = new URL(API_HOST)
-  return `${hostURL.protocol === "https:" ? `wss` : `ws`}://${hostURL.hostname}`
-}
 
 // Game page function
 export default function Game() {
@@ -35,7 +28,6 @@ export default function Game() {
   }) // Used to keep track of the game state
 
   const [gameEnded, setGameEnded] = useState(false) // Used to check if the game has ended
-  const [isWinner, setIsWinner] = useState<boolean>(false) // Used to check if the current player is the winner
   const [winningPlayer, setWinningPlayer] = useState<string | null>(null) // Used to keep track of the winning player
 
   // Function to capitalize the first letter of a string
@@ -98,7 +90,6 @@ export default function Game() {
           currentMoveNumber: gameState.currentMoveNumber + 1,
         })
         setGameEnded(true)
-        setIsWinner(true)
         setWinningPlayer(gameState.currentPlayer)
       }
       else if (response.gameState === 'draw') {
@@ -192,7 +183,6 @@ export default function Game() {
               currentMoveNumber: 1,
             })
             setGameEnded(false)
-            setIsWinner(false)
             setWinningPlayer(null)
 
             try {

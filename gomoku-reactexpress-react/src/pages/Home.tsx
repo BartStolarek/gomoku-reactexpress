@@ -6,18 +6,13 @@ import { API_HOST } from "../constants"
 import style from "./Home.module.css"
 import { post } from "../utils/http"
 
-const getWebSocketURL = () => {
-  if (!API_HOST) return "ws://localhost:8080"
-  const hostURL = new URL(API_HOST)
-  return `${hostURL.protocol === "https:" ? `wss` : `ws`}://${hostURL.hostname}`
-}
 
 export default function Home() {
   const { user } = useContext(UserContext) // Used to check if user is logged in
   const navigate = useNavigate()
   const numberOptions = Array.from({ length: 30 }, (_, i) => i + 1) // Creates an array of numbers from 1 to 30
   const gameContext = useContext(GameContext)
-  const { gameId, boardSizeX, boardSizeY } = gameContext
+  const { boardSizeX, boardSizeY } = gameContext
 
   // Create refs for the select inputs
   const widthRef = useRef<HTMLSelectElement>(null)
