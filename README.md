@@ -43,10 +43,13 @@ JWT_SECRET=my_super_secret_key
 login: test\
 password: test
 
-
 ## Available Scripts
 
 From the root project directory:
+
+### Starting docker
+
+#### `docker-compose up`
 
 ### Starting the Express backend Server
 
